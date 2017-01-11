@@ -1,0 +1,14 @@
+
+net use j: <dfsroot>
+$groups = gci j: | % {$_.name}
+
+$groups | %{$curgroup = $_
+
+$path = "<dfsroot>"+$curgroup
+$result = (((dfsutil diag viewdfspath $path) -split "[<>]") -match "[\\]")[-1]
+
+    if(Test-Path $result)
+    {
+        $result
+    }else{"path $path not resolved"}
+}
