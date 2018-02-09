@@ -1,0 +1,19 @@
+SELECT EME.MbxDisplayName AS [Mailbox Name], ESE.ExchangeComputer AS [Exchange Server], EMS.Name AS [Exchange Database], EME.ADMbxDN AS [AD Details],
+       T.SID AS OwningSID,
+       VSE.VaultStoreName AS [Vault Store],
+       AV.ArchiveName,
+       vLV.ArchivedItems,
+       CAST(vLV.ArchivedItemsSize AS decimal(20, 0)) AS ArchivedItemsSize,
+       vLV.ModifiedDate
+FROM view_ListVaults AS vLV
+LEFT OUTER JOIN EnterpriseVaultDirectory.dbo.ExchangeMailboxStore AS EMS
+INNER JOIN EnterpriseVaultDirectory.dbo.ExchangeMailboxEntry AS EME ON EMS.MbxStoreIdentity = EME.MbxStoreIdentity
+INNER JOIN EnterpriseVaultDirectory.dbo.ExchangeServerEntry AS ESE ON EMS.ExchangeServerIdentity = ESE.ExchangeServerIdentity
+INNER JOIN EnterpriseVaultDirectory.dbo.Root AS R ON EME.DefaultVaultId = R.VaultEntryId
+INNER JOIN EnterpriseVaultDirectory.dbo.Archive AS A ON R.RootIdentity = A.RootIdentity
+INNER JOIN EnterpriseVaultDirectory.dbo.VaultStoreEntry AS VSE ON A.VaultStoreEntryId = VSE.VaultStoreEntryId
+RIGHT OUTER JOIN EnterpriseVaultDirectory.dbo.ArchiveView AS AV ON R.RootIdentity = AV.RootIdentity ON vLV.ArchivePointId = AV.VaultEntryId
+LEFT OUTER JOIN EnterpriseVaultDirectory.dbo.Trustee AS T ON R.OwningTrusteeIdentity = T.TrusteeIdentity
+ORDER BY ESE.ExchangeComputer,
+         EMS.Name,
+         EME.MbxDisplayName ASC
