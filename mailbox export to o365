@@ -1,0 +1,4 @@
+ 
+$localCredential = Get-Credential [on premise exchange admin]
+New-MoveRequest -Identity [mailbox to be moved]-remote -RemoteHostname 'outlook.[wherever it is going]' -TargetDeliveryDomain '[wherever ti is going].onmicrosoft.com'  -RemoteCredential $localCredential -verbose
+ 
